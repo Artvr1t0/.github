@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arturito Logo Viewer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+
+      .logo-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+      }
+
+      .controls {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input[type="range"] {
+        width: 200px;
+      }
+
+      .background-toggle {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+      }
+
+      .background-toggle:hover {
+        background-color: #0056b3;
+      }
+
+      /* Background patterns */
+      .checker {
+        background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+          linear-gradient(-45deg, #ccc 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #ccc 75%),
+          linear-gradient(-45deg, transparent 75%, #ccc 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Arturito Logo Viewer</h1>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="size">Size:</label>
+        <input type="range" id="size" min="100" max="500" value="300" />
+        <span id="size-value">300px</span>
+      </div>
+
+      <div class="control-group">
+        <label for="rotation">Rotation:</label>
+        <input type="range" id="rotation" min="0" max="360" value="0" />
+        <span id="rotation-value">0°</span>
+      </div>
+
+      <button class="background-toggle" onclick="toggleBackground()">
+        Toggle Background
+      </button>
+    </div>
+
+    <div class="logo-container" id="logo-container">
+      <!-- Replace the src with your generated SVG file path -->
+      <svg width="300" height="300">
+        <use href="./resources/output/arturito_logo.svg" />
+      </svg>
+    </div>
+
+    <script>
+      const logoContainer = document.querySelector(".logo-container");
+      const svg = document.querySelector("svg");
+      const sizeInput = document.getElementById("size");
+      const rotationInput = document.getElementById("rotation");
+      const sizeValue = document.getElementById("size-value");
+      const rotationValue = document.getElementById("rotation-value");
+
+      // Update size
+      sizeInput.addEventListener("input", (e) => {
+        const size = e.target.value;
+        svg.setAttribute("width", size);
+        svg.setAttribute("height", size);
+        sizeValue.textContent = `${size}px`;
+      });
+
+      // Update rotation
+      rotationInput.addEventListener("input", (e) => {
+        const rotation = e.target.value;
+        svg.style.transform = `rotate(${rotation}deg)`;
+        rotationValue.textContent = `${rotation}°`;
+      });
+
+      // Toggle background pattern
+      function toggleBackground() {
+        logoContainer.classList.toggle("checker");
+      }
+
+      // Load SVG
+      fetch("output/arturito_logo.svg")
+        .then((response) => response.text())
+        .then((svgContent) => {
+          logoContainer.innerHTML = svgContent;
+          const loadedSvg = logoContainer.querySelector("svg");
+          loadedSvg.setAttribute("width", sizeInput.value);
+          loadedSvg.setAttribute("height", sizeInput.value);
+        })
+        .catch((error) => {
+          console.error("Error loading SVG:", error);
+          logoContainer.innerHTML =
+            "<p>Error loading SVG. Make sure the file exists in the output directory.</p>";
+        });
+    </script>
+  </body>
+</html>
